@@ -46,5 +46,7 @@ module.exports = {
     ],
     "no-console": 0,
     "react/prop-types": 0
+  }, eslintConfig: {
+    extends: ["plugin:cypress/recommended"],
   }
 }
