@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Run date
         run: |
-          echo date
+           date
           
 
   print_directory:
@@ -19,4 +19,4 @@ jobs:
     steps:
       - name: Print directory
         run: |
-          echo ls -a
+           ls -a
