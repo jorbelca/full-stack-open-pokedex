@@ -13,7 +13,7 @@ jobs:
         run: |
           echo date
           
-jobs:
+
   print_directory:
     runs-on: ubuntu-20.04
     steps:
