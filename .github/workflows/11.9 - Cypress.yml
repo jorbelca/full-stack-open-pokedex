@@ -1,4 +1,4 @@
-name: e2e tests
+name: Complete deploy tests
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
       branches: [master]
       types: [opened, synchronize]
 jobs:
- master_deployment_pipeline:
+  setup:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -22,21 +22,30 @@ jobs:
         run: npm run lint:fix
       - name: lint
         run: npm run eslint
-      - name: build
-        run: npm run build
-      - name: test E2E            
-        uses: cypress-io/github-action@v2
-        with:
-                browser: chrome
-                headless: true
-                command: npx cypress run
-                start: npm run start-prod
-                wait-on: http://localhost:5000
-                
-       
-      - name: Deploy
-        if: ${{ github.event_name == 'push' }} 
-        uses: akhileshns/heroku-deploy@v3.12.12 
+  build:
+   needs: setup
+   runs-on: ubuntu-20.04
+   steps:
+      - run: npm run build
+        
+  tests:
+   needs: build
+   runs-on: ubuntu-20.04
+   steps:
+      - uses: cypress-io/github-action@v2
+        with:  
+         browser: chrome
+         headless: true
+         command: npx cypress run
+         start: npm run start-prod
+         wait-on: http://localhost:5000
+              
+  deploy:     
+    needs: tests
+    runs-on: ubuntu-20.04
+    if: ${{ github.event_name == 'push' }} 
+    steps:
+      - uses: akhileshns/heroku-deploy@v3.12.12 
         with:
           heroku_api_key: ${{secrets.HEROKU_POKEDEX_TOKEN}}
           heroku_app_name: "pokedex10"
@@ -45,6 +54,18 @@ jobs:
           checkstring: "ok" 
           delay: 1
           rollbackonhealthcheckfailed: true
+          
+  versioning:
+    needs: deploy
+    runs-on: ubuntu-20.04
+    if: ${{ github.event_name == 'push' }} 
+    steps:
+     - uses: anothrNick/github-tag-action@1.36.0
+       env:
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         WITH_V: true
+         DEFAULT_BUMP: "patch"
+         DRY_RUN: true
 
     
  
