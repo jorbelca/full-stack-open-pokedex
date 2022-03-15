@@ -29,3 +29,10 @@ jobs:
                 command: npx cypress run
                 start: npm run start-prod
                 wait-on: http://localhost:5000
+                
+                
+      - uses: akhileshns/heroku-deploy@v3.12.12 
+        with:
+          heroku_api_key: ${{secrets.HEROKU_POKEDEX_TOKEN}}
+          heroku_app_name: "pokedex10"
+          heroku_email: "jordi_belda@hotmail.com"
