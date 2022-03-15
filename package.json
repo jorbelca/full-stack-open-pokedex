@@ -1,6 +1,6 @@
 {
   "name": "fullstackopen-cicd",
-  "version": "1.0.0",
+  "version": "3.4.0",
   "description": "Full Stack Open",
   "main": "src/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "eslint": "eslint './**/*.{js,jsx}'",
     "lint:fix": "eslint --fix --ext .js,.jsx .",
     "build": "webpack --mode production",
-    "test:e2e": "cypress open"
+    "test:e2e": "npx cypress run"
   },
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "babel-jest": "^25.5.1",
     "babel-loader": "^8.1.0",
     "css-loader": "^3.5.3",
-    "cypress": "8.5.0",
+    "cypress": "^9.5.1",
     "eslint": "^6.8.0",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-jest": "^23.11.0",
