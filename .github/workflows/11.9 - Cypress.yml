@@ -22,14 +22,11 @@ jobs:
         run: npm run lint:fix
       - name: lint
         run: npm run eslint
-  build:
-   needs: setup
-   runs-on: ubuntu-20.04
-   steps:
-      - run: npm run build
+      - name: build
+        run: npm run build
         
   tests:
-   needs: build
+   needs: setup
    runs-on: ubuntu-20.04
    steps:
       - uses: cypress-io/github-action@v2
