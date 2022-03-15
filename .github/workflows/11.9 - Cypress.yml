@@ -25,7 +25,7 @@ jobs:
       - name: build
         run: npm run build
       - name: test E2E            
-      - uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v2
         with:
                 browser: chrome
                 headless: true
@@ -36,7 +36,7 @@ jobs:
        
       - name: Deploy
         if: ${{ github.event_name == 'push' }} 
-      - uses: akhileshns/heroku-deploy@v3.12.12 
+        uses: akhileshns/heroku-deploy@v3.12.12 
         with:
           heroku_api_key: ${{secrets.HEROKU_POKEDEX_TOKEN}}
           heroku_app_name: "pokedex10"
