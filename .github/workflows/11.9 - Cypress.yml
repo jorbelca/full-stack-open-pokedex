@@ -25,11 +25,12 @@ jobs:
       - name: build
         run: npm run build
   
-tests:
-   tag_release:     
-   needs: [setup]
-   runs-on: ubuntu-20.04
-   steps:
+  
+  tag_release:     
+    tests:
+    needs: [setup]
+    runs-on: ubuntu-20.04
+    steps:
       - uses: cypress-io/github-action@v2
         with:  
          browser: chrome
@@ -38,33 +39,34 @@ tests:
          start: npm run start-prod
          wait-on: http://localhost:5000
               
-deploy:   
+  
     tag_release:
-    needs: [tests]
-    runs-on: ubuntu-20.04
-    if: ${{ github.event_name == 'push' }} 
-    steps:
-      - uses: akhileshns/heroku-deploy@v3.12.12 
-        with:
-          heroku_api_key: ${{secrets.HEROKU_POKEDEX_TOKEN}}
-          heroku_app_name: "pokedex10"
-          heroku_email: "jordi_belda@hotmail.com"
-          healthcheck: "https://pokedex10.herokuapp.com/health"
-          checkstring: "ok" 
-          delay: 1
-          rollbackonhealthcheckfailed: true
+      deploy:   
+      needs: [tests]
+      runs-on: ubuntu-20.04
+      if: ${{ github.event_name == 'push' }} 
+      steps:
+        - uses: akhileshns/heroku-deploy@v3.12.12 
+          with:
+            heroku_api_key: ${{secrets.HEROKU_POKEDEX_TOKEN}}
+            heroku_app_name: "pokedex10"
+            heroku_email: "jordi_belda@hotmail.com"
+            healthcheck: "https://pokedex10.herokuapp.com/health"
+            checkstring: "ok" 
+            delay: 1
+            rollbackonhealthcheckfailed: true
           
-  versioning:
-    needs: deploy
-    runs-on: ubuntu-20.04
-    if: ${{ github.event_name == 'push' }} 
-    steps:
+   tag_release:
+     needs: [deploy]
+     runs-on: ubuntu-20.04
+     if: ${{ github.event_name == 'push' }} 
+     steps:
      - uses: anothrNick/github-tag-action@1.36.0
        env:
-         GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
-         WITH_V: true
-         DEFAULT_BUMP: "patch"
-         DRY_RUN: true
+           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+           WITH_V: true
+           DEFAULT_BUMP: "patch"
+           DRY_RUN: true
 
     
  
