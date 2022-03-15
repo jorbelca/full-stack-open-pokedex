@@ -36,3 +36,5 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_POKEDEX_TOKEN}}
           heroku_app_name: "pokedex10"
           heroku_email: "jordi_belda@hotmail.com"
+          healthcheck: "https://pokedex10.herokuapp.com/health"
+          checkstring: "ok"
