@@ -37,4 +37,4 @@ jobs:
           heroku_app_name: "pokedex10"
           heroku_email: "jordi_belda@hotmail.com"
           healthcheck: "https://pokedex10.herokuapp.com/health"
-          checkstring: "ok"
+          checkstring: "ok" 
