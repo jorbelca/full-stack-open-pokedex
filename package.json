@@ -17,7 +17,7 @@
     "url": "git+https://github.com/smartlyio/fullstackopen-cicd.git"
   },
   "keywords": [
-    "fullstack-open"
+    "fullstack-open", "CI-CD"
   ],
   "author": "Smartly.io",
   "license": "ISC",
