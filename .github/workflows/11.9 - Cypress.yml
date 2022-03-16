@@ -153,7 +153,7 @@ jobs:
       with:
              severity: info
              username: Github
-             color: '#00800'
+           
              avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png          
              details: 'to https://pokedex10.herokuapp.com'
              text: "A new version of Pokedex deployed"
