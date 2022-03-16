@@ -2,6 +2,11 @@ name: PING
 on: 
   schedule:
   - cron: "35 * * * *"
+  
+
+  push:
+    branches:
+      - master
 
 jobs:
   test_schedule:
