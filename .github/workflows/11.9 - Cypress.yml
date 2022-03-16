@@ -53,33 +53,33 @@ jobs:
           name: dist
           path: dist
       
-  tests:
-     runs-on: ubuntu-20.04
-     needs: [build]
-     steps:
-      - uses: actions/checkout@v3
-        with: 
-          fetch-depth: 0
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-      - name: npm install 
-        run: npm ci
-      - uses: actions/download-artifact@v2
-        with: 
-          name: dist
-          path: dist
-      - uses: cypress-io/github-action@v2
-        with:  
-         browser: chrome
-         headless: true
-         command: npx cypress run
-         start: npm run start-prod
-         wait-on: http://localhost:5000
+#   tests:
+#      runs-on: ubuntu-20.04
+#      needs: [build]
+#      steps:
+#       - uses: actions/checkout@v3
+#         with: 
+#           fetch-depth: 0
+#       - uses: actions/setup-node@v2
+#         with:
+#           node-version: '16'
+#       - name: npm install 
+#         run: npm ci
+#       - uses: actions/download-artifact@v2
+#         with: 
+#           name: dist
+#           path: dist
+#       - uses: cypress-io/github-action@v2
+#         with:  
+#          browser: chrome
+#          headless: true
+#          command: npx cypress run
+#          start: npm run start-prod
+#          wait-on: http://localhost:5000
               
   deploy:   
       runs-on: ubuntu-20.04
-      needs: [setup, lint,build, tests]
+      needs: [setup, lint,build]
       if: ${{ github.event_name == 'push' }} 
       steps:
         - uses: actions/checkout@v3
