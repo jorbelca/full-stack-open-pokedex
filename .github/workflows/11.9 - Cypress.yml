@@ -144,7 +144,7 @@ jobs:
 #              color: "#ff002b"
 #              avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png          
 #              description: "Commit Failed !"
-#              details: '${{github.event_path}} has broken the build'
+#              details: '${{github.event.commits.*.url}} has broken the build'
 #              footer: "Severity: Error"
 #              text: "A new version of Pokedex deployed"
 #              webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
@@ -163,6 +163,7 @@ jobs:
         run: echo "$COMMITS"
       - name: commit messages
         env:
-          COMMIT_MESSAGES: ${{ toJson(github.event.commits.message) }}
+          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
+          if: $COMMIT_MESSAGES.includes('#skips)
         run: echo "$COMMIT_MESSAGES"
           
