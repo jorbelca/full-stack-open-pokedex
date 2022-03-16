@@ -71,6 +71,12 @@ jobs:
       needs: [setup, lint, tests]
       if: ${{ github.event_name == 'push' }} 
       steps:
+        - uses: actions/checkout@v3
+        - uses: actions/setup-node@v2
+          with:
+            node-version: '16'
+        - name: npm install 
+          run: npm ci
         - name: build
           run: npm run build
         - uses: akhileshns/heroku-deploy@v3.12.12 
