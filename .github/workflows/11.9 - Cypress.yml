@@ -105,9 +105,11 @@ jobs:
           
   versioning:
      runs-on: ubuntu-20.04
-
      if: ${{ github.event_name == 'push' }} 
      steps:
+     - uses: actions/checkout@v2
+       with:
+        fetch-depth: '0'
      - uses: anothrNick/github-tag-action@1.36.0
        env:
            GITHUB_TOKEN: ${{ github.token }}
