@@ -24,6 +24,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
+          cache: 'npm'
           node-version: '16'
       - name: npm install 
         run: npm ci
@@ -33,13 +34,13 @@ jobs:
         run: npm run eslint
   build:
    runs-on: ubuntu-20.04
-   
    steps:
       - uses: actions/checkout@v3
         with: 
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
+          cache: 'npm'
           node-version: '16'
       - name: npm install 
         run: npm ci
@@ -52,13 +53,14 @@ jobs:
       
   tests:
      runs-on: ubuntu-20.04
-     needs: [build]
+     needs: [build,lint]
      steps:
       - uses: actions/checkout@v3
         with: 
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
+          cache: 'npm'
           node-version: '16'
       - name: npm install 
         run: npm ci
@@ -111,7 +113,7 @@ jobs:
            GITHUB_TOKEN: ${{ github.token }}
            WITH_V: true
            DEFAULT_BUMP: "patch"
-           DRY_RUN: true
+        
 
     
  
