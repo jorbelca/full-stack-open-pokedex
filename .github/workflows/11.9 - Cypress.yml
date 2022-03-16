@@ -155,7 +155,8 @@ jobs:
              username: Github
              color: "#2bff00"
              avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png          
-             details: 'to https://pokedex10.herokuapp.com'
+             description: ""
+             details: 'to https://pokedex10.herokuapp.com by @jorbelca'
              footer: "Severity: Informational"
              text: "A new version of Pokedex deployed"
              webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
