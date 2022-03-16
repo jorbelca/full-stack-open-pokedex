@@ -15,22 +15,47 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
-
+      - name: npm install 
+        run: npm ci
+  lint:
+   runs-on: ubuntu-20.04
+   steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
       - name: npm install 
         run: npm ci
       - name: lint fix
         run: npm run lint:fix
       - name: lint
         run: npm run eslint
+  build:
+   runs-on: ubuntu-20.04
+   needs: [setup, lint]
+   steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: npm install 
+        run: npm ci
       - name: build
         run: npm run build
   
-  
-  tag_release:     
-    tests:
-    needs: [setup]
-    runs-on: ubuntu-20.04
-    steps:
+    
+  tests:
+     runs-on: ubuntu-20.04
+     needs: [setup,lint, build]
+     steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - name: npm install 
+        run: npm ci
+      - name: build
+        run: npm run build
       - uses: cypress-io/github-action@v2
         with:  
          browser: chrome
@@ -40,12 +65,14 @@ jobs:
          wait-on: http://localhost:5000
               
   
-    tag_release:
-      deploy:   
-      needs: [tests]
+
+  deploy:   
       runs-on: ubuntu-20.04
+      needs: [setup, lint, tests]
       if: ${{ github.event_name == 'push' }} 
       steps:
+        - name: build
+          run: npm run build
         - uses: akhileshns/heroku-deploy@v3.12.12 
           with:
             heroku_api_key: ${{secrets.HEROKU_POKEDEX_TOKEN}}
@@ -56,9 +83,9 @@ jobs:
             delay: 1
             rollbackonhealthcheckfailed: true
           
-   tag_release:
-     needs: [deploy]
+  versioning:
      runs-on: ubuntu-20.04
+     needs: [setup, lint, deploy, tests]
      if: ${{ github.event_name == 'push' }} 
      steps:
      - uses: anothrNick/github-tag-action@1.36.0
