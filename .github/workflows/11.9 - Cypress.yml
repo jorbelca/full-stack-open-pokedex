@@ -153,9 +153,10 @@ jobs:
       with:
              severity: info
              username: Github
-           
+             color: "#2bff00"
              avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png          
              details: 'to https://pokedex10.herokuapp.com'
+             footer: "Severity: Informational"
              text: "A new version of Pokedex deployed"
              webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
     - name: Test Failure
