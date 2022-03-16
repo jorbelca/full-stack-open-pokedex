@@ -16,106 +16,109 @@ jobs:
         with:
           access_token: ${{ github.token }}
  
-#   lint:
-#    runs-on: ubuntu-20.04
-#    steps:
-#       - uses: actions/checkout@v3
-#         with: 
-#           fetch-depth: 0
-#       - uses: actions/setup-node@v2
-#         with:
-#           cache: 'npm'
-#           node-version: '16'
-#       - name: npm install 
-#         run: npm ci
-#       - name: lint fix
-#         run: npm run lint:fix
-#       - name: lint
-#         run: npm run eslint
-#   build:
-#    runs-on: ubuntu-20.04
-#    steps:
-#       - uses: actions/checkout@v3
-#         with: 
-#           fetch-depth: 0
-#       - uses: actions/setup-node@v2
-#         with:
-#           cache: 'npm'
-#           node-version: '16'
-#       - name: npm install 
-#         run: npm ci
-#       - name: build
-#         run: npm run build
-#       - uses: actions/upload-artifact@v2
-#         with: 
-#           name: dist
-#           path: dist
+  lint:
+    runs-on: ubuntu-20.04
+    steps:
+       - uses: actions/checkout@v3
+         with: 
+           fetch-depth: 0
+       - uses: actions/setup-node@v2
+         with:
+           cache: 'npm'
+           node-version: '16'
+       - name: npm install 
+         run: npm ci
+       - name: lint fix
+         run: npm run lint:fix
+       - name: lint
+         run: npm run eslint
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+       - uses: actions/checkout@v3
+         with: 
+           fetch-depth: 0
+       - uses: actions/setup-node@v2
+         with:
+           cache: 'npm'
+           node-version: '16'
+       - name: npm install 
+         run: npm ci
+       - name: build
+         run: npm run build
+       - uses: actions/upload-artifact@v2
+         with: 
+           name: dist
+           path: dist
       
-#   tests:
-#      runs-on: ubuntu-20.04
-#      needs: [build,lint]
-#      steps:
-#       - uses: actions/checkout@v3
-#         with: 
-#           fetch-depth: 0
-#       - uses: actions/setup-node@v2
-#         with:
-#           cache: 'npm'
-#           node-version: '16'
-#       - name: npm install 
-#         run: npm ci
-#       - uses: actions/download-artifact@v2
-#         with: 
-#           name: dist
-#           path: dist
-#       - uses: cypress-io/github-action@v2
-#         with:  
-#          browser: chrome
-#          headless: true
-#          command: npx cypress run
-#          start: npm run start-prod
-#          wait-on: http://localhost:5000
+  tests:
+     runs-on: ubuntu-20.04
+     needs: [build,lint]
+     steps:
+      - uses: actions/checkout@v3
+        with: 
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          cache: 'npm'
+          node-version: '16'
+      - name: npm install 
+        run: npm ci
+      - uses: actions/download-artifact@v2
+        with: 
+          name: dist
+          path: dist
+      - uses: cypress-io/github-action@v2
+        with:  
+         browser: chrome
+         headless: true
+         command: npx cypress run
+         start: npm run start-prod
+         wait-on: http://localhost:5000
               
-#   deploy:   
-#       runs-on: ubuntu-20.04
-#       needs: [ lint,build,tests]
-#       if: ${{ github.event_name == 'push' }} 
-#       steps:
-#         - uses: actions/checkout@v3
-#           with: 
-#            fetch-depth: 0
-#         - name: Install dependencies
-#           run: |
-#            if [ -e yarn.lock ]; then
-#            yarn install --frozen-lockfile
-#            elif [ -e package-lock.json ]; then
-#            npm ci
-#            else
-#            npm i
-#            fi
-#         - uses: akhileshns/heroku-deploy@v3.12.12 
-#           with:
-#             heroku_api_key: ${{secrets.HEROKU_POKEDEX_TOKEN}}
-#             heroku_app_name: "pokedex10"
-#             heroku_email: "jordi_belda@hotmail.com"
-#             healthcheck: "https://pokedex10.herokuapp.com/health"
-#             checkstring: "ok" 
-#             delay: 1
-#             rollbackonhealthcheckfailed: true
+  deploy:
+      if: ${{ github.event_name == 'push' }} || "! contains(github.event.head_commit.message, '#skips')"
+      runs-on: ubuntu-20.04
+      needs: [ lint,build,tests]
+     
+      
+      steps:
+        - uses: actions/checkout@v3
+          with: 
+           fetch-depth: 0
+        - name: Install dependencies
+          run: |
+           if [ -e yarn.lock ]; then
+           yarn install --frozen-lockfile
+           elif [ -e package-lock.json ]; then
+           npm ci
+           else
+           npm i
+           fi
+        - uses: akhileshns/heroku-deploy@v3.12.12 
+          with:
+            heroku_api_key: ${{secrets.HEROKU_POKEDEX_TOKEN}}
+            heroku_app_name: "pokedex10"
+            heroku_email: "jordi_belda@hotmail.com"
+            healthcheck: "https://pokedex10.herokuapp.com/health"
+            checkstring: "ok" 
+            delay: 1
+            rollbackonhealthcheckfailed: true
           
-#   versioning:
-#      runs-on: ubuntu-20.04
-#      if: ${{ github.event_name == 'push' }} 
-#      steps:
-#      - uses: actions/checkout@v2
-#        with:
-#         fetch-depth: '0'
-#      - uses: anothrNick/github-tag-action@1.36.0
-#        env:
-#            GITHUB_TOKEN: ${{ github.token }}
-#            WITH_V: true
-#            DEFAULT_BUMP: patch
-#            DRY_RUN: true
+  versioning:
+     runs-on: ubuntu-20.04
+     if: ${{ github.event_name == 'push' }} || "! contains(github.event.head_commit.message, '#skips')"
+     
+     steps:
+     - uses: actions/checkout@v2
+       with:
+        fetch-depth: '0'
+     - uses: anothrNick/github-tag-action@1.36.0
+       env:
+           GITHUB_TOKEN: ${{ github.token }}
+           WITH_V: true
+           DEFAULT_BUMP: patch
+           DRY_RUN: true
            
 
     
@@ -149,13 +152,13 @@ jobs:
 #              text: "A new version of Pokedex deployed"
 #              webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
-  a_test_job:
-    runs-on: ubuntu-20.04
-    if: "! contains(github.event.head_commit.message, '#skips')"
-    steps:
-    - name: commit 
-      uses: actions/checkout@v2
-      env:
-          COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}            
-          run: echo "$COMMIT_MESSAGES"
+#   a_test_job:
+#     runs-on: ubuntu-20.04
+#     if: "! contains(github.event.head_commit.message, '#skips')"
+#     steps:
+#     - name: commit 
+#       uses: actions/checkout@v2
+#       env:
+#           COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}            
+#           run: echo "$COMMIT_MESSAGES"
           
