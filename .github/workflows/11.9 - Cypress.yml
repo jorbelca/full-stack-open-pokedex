@@ -48,7 +48,7 @@ jobs:
         run: npm ci
       - name: build
         run: npm run build
-      - uses: actions/upload@artifact@v2
+      - uses: actions/upload-artifact@v2
         with: 
           name: dist
           path: dist
@@ -65,7 +65,7 @@ jobs:
           node-version: '16'
       - name: npm install 
         run: npm ci
-      - uses: actions/download@artifact@v2
+      - uses: actions/download-artifact@v2
         with: 
           name: dist
           path: dist
@@ -90,7 +90,7 @@ jobs:
             node-version: '16'
         - name: npm install 
           run: npm ci
-        - uses: actions/download@artifact@v2
+        - uses: actions/download-artifact@v2
           with: 
            name: dist
            path: dist
