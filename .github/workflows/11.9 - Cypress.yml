@@ -15,17 +15,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
-  setup:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-        with: 
-          fetch-depth: 0
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-      - name: npm install 
-        run: npm ci
+ 
   lint:
    runs-on: ubuntu-20.04
    steps:
@@ -86,7 +76,7 @@ jobs:
               
   deploy:   
       runs-on: ubuntu-20.04
-      needs: [setup, lint,build,tests]
+      needs: [ lint,build,tests]
       if: ${{ github.event_name == 'push' }} 
       steps:
         - uses: actions/checkout@v3
