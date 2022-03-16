@@ -8,140 +8,156 @@ on:
       branches: [master]
       types: [opened, synchronize]
 jobs:
-  avoid_reduncy:
-    runs-on: ubuntu-20.04
-    steps: 
-      - name: Cancel previous redundant builds
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ github.token }}
+#   avoid_reduncy:
+#     runs-on: ubuntu-20.04
+#     steps: 
+#       - name: Cancel previous redundant builds
+#         uses: styfle/cancel-workflow-action@0.9.1
+#         with:
+#           access_token: ${{ github.token }}
  
-  lint:
-   runs-on: ubuntu-20.04
-   steps:
-      - uses: actions/checkout@v3
-        with: 
-          fetch-depth: 0
-      - uses: actions/setup-node@v2
-        with:
-          cache: 'npm'
-          node-version: '16'
-      - name: npm install 
-        run: npm ci
-      - name: lint fix
-        run: npm run lint:fix
-      - name: lint
-        run: npm run eslint
-  build:
-   runs-on: ubuntu-20.04
-   steps:
-      - uses: actions/checkout@v3
-        with: 
-          fetch-depth: 0
-      - uses: actions/setup-node@v2
-        with:
-          cache: 'npm'
-          node-version: '16'
-      - name: npm install 
-        run: npm ci
-      - name: build
-        run: npm run build
-      - uses: actions/upload-artifact@v2
-        with: 
-          name: dist
-          path: dist
+#   lint:
+#    runs-on: ubuntu-20.04
+#    steps:
+#       - uses: actions/checkout@v3
+#         with: 
+#           fetch-depth: 0
+#       - uses: actions/setup-node@v2
+#         with:
+#           cache: 'npm'
+#           node-version: '16'
+#       - name: npm install 
+#         run: npm ci
+#       - name: lint fix
+#         run: npm run lint:fix
+#       - name: lint
+#         run: npm run eslint
+#   build:
+#    runs-on: ubuntu-20.04
+#    steps:
+#       - uses: actions/checkout@v3
+#         with: 
+#           fetch-depth: 0
+#       - uses: actions/setup-node@v2
+#         with:
+#           cache: 'npm'
+#           node-version: '16'
+#       - name: npm install 
+#         run: npm ci
+#       - name: build
+#         run: npm run build
+#       - uses: actions/upload-artifact@v2
+#         with: 
+#           name: dist
+#           path: dist
       
-  tests:
-     runs-on: ubuntu-20.04
-     needs: [build,lint]
-     steps:
-      - uses: actions/checkout@v3
-        with: 
-          fetch-depth: 0
-      - uses: actions/setup-node@v2
-        with:
-          cache: 'npm'
-          node-version: '16'
-      - name: npm install 
-        run: npm ci
-      - uses: actions/download-artifact@v2
-        with: 
-          name: dist
-          path: dist
-      - uses: cypress-io/github-action@v2
-        with:  
-         browser: chrome
-         headless: true
-         command: npx cypress run
-         start: npm run start-prod
-         wait-on: http://localhost:5000
+#   tests:
+#      runs-on: ubuntu-20.04
+#      needs: [build,lint]
+#      steps:
+#       - uses: actions/checkout@v3
+#         with: 
+#           fetch-depth: 0
+#       - uses: actions/setup-node@v2
+#         with:
+#           cache: 'npm'
+#           node-version: '16'
+#       - name: npm install 
+#         run: npm ci
+#       - uses: actions/download-artifact@v2
+#         with: 
+#           name: dist
+#           path: dist
+#       - uses: cypress-io/github-action@v2
+#         with:  
+#          browser: chrome
+#          headless: true
+#          command: npx cypress run
+#          start: npm run start-prod
+#          wait-on: http://localhost:5000
               
-  deploy:   
-      runs-on: ubuntu-20.04
-      needs: [ lint,build,tests]
-      if: ${{ github.event_name == 'push' }} 
-      steps:
-        - uses: actions/checkout@v3
-          with: 
-           fetch-depth: 0
-        - name: Install dependencies
-          run: |
-           if [ -e yarn.lock ]; then
-           yarn install --frozen-lockfile
-           elif [ -e package-lock.json ]; then
-           npm ci
-           else
-           npm i
-           fi
-        - uses: akhileshns/heroku-deploy@v3.12.12 
-          with:
-            heroku_api_key: ${{secrets.HEROKU_POKEDEX_TOKEN}}
-            heroku_app_name: "pokedex10"
-            heroku_email: "jordi_belda@hotmail.com"
-            healthcheck: "https://pokedex10.herokuapp.com/health"
-            checkstring: "ok" 
-            delay: 1
-            rollbackonhealthcheckfailed: true
+#   deploy:   
+#       runs-on: ubuntu-20.04
+#       needs: [ lint,build,tests]
+#       if: ${{ github.event_name == 'push' }} 
+#       steps:
+#         - uses: actions/checkout@v3
+#           with: 
+#            fetch-depth: 0
+#         - name: Install dependencies
+#           run: |
+#            if [ -e yarn.lock ]; then
+#            yarn install --frozen-lockfile
+#            elif [ -e package-lock.json ]; then
+#            npm ci
+#            else
+#            npm i
+#            fi
+#         - uses: akhileshns/heroku-deploy@v3.12.12 
+#           with:
+#             heroku_api_key: ${{secrets.HEROKU_POKEDEX_TOKEN}}
+#             heroku_app_name: "pokedex10"
+#             heroku_email: "jordi_belda@hotmail.com"
+#             healthcheck: "https://pokedex10.herokuapp.com/health"
+#             checkstring: "ok" 
+#             delay: 1
+#             rollbackonhealthcheckfailed: true
           
-  versioning:
-     runs-on: ubuntu-20.04
-     needs: [deploy]
-     if: ${{ github.event_name == 'push' }} 
-     steps:
-     - uses: anothrNick/github-tag-action@1.36.0
-       env:
-           GITHUB_TOKEN: ${{ github.token }}
-           WITH_V: true
-           DEFAULT_BUMP: "patch"
+#   versioning:
+#      runs-on: ubuntu-20.04
+#      needs: [deploy]
+#      if: ${{ github.event_name == 'push' }} 
+#      steps:
+#      - uses: anothrNick/github-tag-action@1.36.0
+#        env:
+#            GITHUB_TOKEN: ${{ github.token }}
+#            WITH_V: true
+#            DEFAULT_BUMP: "patch"
            
            
-  notification:
-    runs-on: ubuntu-20.04
-    needs: [lint, build, tests, deploy, versioning]
-    steps:
-      - name: Test Success
-        uses: rjstone/discord-webhook-notify@v1
-        if: ${{ success() }}
-        with:
-                severity: info
-                username: Github
-                color: '#00800'
-                avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png          
-                details: 'to https://pokedex10.herokuapp.com'
-                text: "A new version of Pokedex deployed"
-                webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+#   notification:
+#     runs-on: ubuntu-20.04
+#     needs: [lint, build, tests, deploy, versioning]
+#     steps:
+#       - name: Test Success
+#         uses: rjstone/discord-webhook-notify@v1
+#         if: ${{ success() }}
+#         with:
+#                 severity: info
+#                 username: Github
+#                 color: '#00800'
+#                 avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png          
+#                 details: 'to https://pokedex10.herokuapp.com'
+#                 text: "A new version of Pokedex deployed"
+#                 webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
-      - name: Test Failure
-        uses: rjstone/discord-webhook-notify@v1
-        if: ${{ failure() }}
-        with:
-                severity: error
-                username: Github
-                color: '#880808'
-                avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png           
-                details: "Commit Failed ! ${{github.event.path}}"
-                webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+#       - name: Test Failure
+#         uses: rjstone/discord-webhook-notify@v1
+#         if: ${{ failure() }}
+#         with:
+#                 severity: error
+#                 username: Github
+#                 color: '#880808'
+#                 avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png           
+#                 details: "Commit Failed ! ${{github.event.path}}"
+#                 webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
 
     
- 
+ notification:
+   runs-on: ubuntu-20.04
+   steps:
+    - name: Test Success
+      uses: rjstone/discord-webhook-notify@v1
+      if: success()
+      with:
+            severity: info
+            details: Test Succeeded!
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+    - name: Test Failure
+      uses: rjstone/discord-webhook-notify@v1
+      if: failure()
+      with:
+            severity: error
+            details: Test Failed!
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
