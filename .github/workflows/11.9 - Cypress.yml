@@ -151,9 +151,13 @@ jobs:
       uses: rjstone/discord-webhook-notify@v1
       if: success()
       with:
-            severity: info
-            details: Test Succeeded!
-            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+             severity: info
+             username: Github
+             color: '#00800'
+             avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png          
+             details: 'to https://pokedex10.herokuapp.com'
+             text: "A new version of Pokedex deployed"
+             webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
     - name: Test Failure
       uses: rjstone/discord-webhook-notify@v1
       if: failure()
