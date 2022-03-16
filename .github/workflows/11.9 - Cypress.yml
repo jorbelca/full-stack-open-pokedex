@@ -106,7 +106,7 @@ jobs:
           
   versioning:
      runs-on: ubuntu-20.04
-     needs: [setup, lint, deploy, tests]
+     needs: []
      if: ${{ github.event_name == 'push' }} 
      steps:
      - uses: anothrNick/github-tag-action@1.36.0
