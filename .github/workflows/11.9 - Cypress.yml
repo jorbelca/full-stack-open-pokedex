@@ -113,7 +113,38 @@ jobs:
            GITHUB_TOKEN: ${{ github.token }}
            WITH_V: true
            DEFAULT_BUMP: "patch"
-        
+           
+           
+  notification:
+    runs-on: ubuntu-20.04
+    needs: [lint, build, tests, deploy, versioning]
+    steps:
+      - name: Test Success
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{ success()}}
+        with:
+                severity: info
+                username: Github
+                color: '#00800'
+                avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png
+           
+                details: 'to https://pokedex10.herokuapp.com'
+
+                text: A new version of Pokedex deployed
+                webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Test Failure
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        if: ${{failure()}}
+        with:
+                severity: error
+                username: Github
+                color: '#880808'
+                avatarUrl: https://github.githubassets.com/images/modules/logos_page/Octocat.png
+           
+                details: Commit Failed !${{github.event.path}}
+                webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
 
     
  
