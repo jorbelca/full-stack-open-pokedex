@@ -36,7 +36,7 @@ jobs:
         run: npm run eslint
   build:
    runs-on: ubuntu-20.04
-   needs: [setup, lint]
+   needs: [setup]
    steps:
       - uses: actions/checkout@v3
         with: 
@@ -55,7 +55,7 @@ jobs:
       
   tests:
      runs-on: ubuntu-20.04
-     needs: [setup,lint]
+     needs: [setup,lint, build]
      steps:
       - uses: actions/checkout@v3
         with: 
@@ -79,7 +79,7 @@ jobs:
               
   deploy:   
       runs-on: ubuntu-20.04
-      needs: [setup, lint, tests]
+      needs: [setup, lint,build, tests]
       if: ${{ github.event_name == 'push' }} 
       steps:
         - uses: actions/checkout@v3
