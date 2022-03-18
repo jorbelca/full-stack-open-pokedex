@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Say testing
-        if: ${{ (! contains(github.event.head_commit.message, "#skips"))}} || ${{(github.event_name == 'push')  }} 
+        if: ${{ (! contains(github.event.head_commit.message, '#skips'))}} || ${{(github.event_name == 'push')  }} 
         run: |
           echo "Test"
 
